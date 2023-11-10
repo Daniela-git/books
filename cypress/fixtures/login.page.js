@@ -10,7 +10,7 @@ class LoginPage {
   }
 
   login(username, password) {
-    cy.get(this.userField).type(username);
+    cy.get(this.userField).type(username, { force: true });
     cy.get(this.confirButton).click({ multiple: true });
     cy.get(this.passwordField).type(password);
     cy.get(this.confirButton).click({ multiple: true }).should('not.exist');

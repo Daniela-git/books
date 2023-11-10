@@ -31,4 +31,6 @@ jobs:
         env:
           CYPRESS_username: ${{ secrets.USERNAME }}
           CYPRESS_password: ${{ secrets.PASSWORD }}
-        run: npm run cypress:run
+        run: |
+          echo CYPRESS_username
+          npm run cypress:run
