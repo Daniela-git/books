@@ -10,9 +10,6 @@ jobs:
   schedule-run:
     runs-on: ubuntu-latest
     name: todays books
-    env:
-      CYPRESS_username: ${{ secrets.USERNAME }}
-      CYPRESS_password: ${{ secrets.PASSWORD }}
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
@@ -31,4 +28,7 @@ jobs:
       - name: Install packages
         run: npm install
       - name: Run script
+        env:
+          CYPRESS_username: ${{ secrets.USERNAME }}
+          CYPRESS_password: ${{ secrets.PASSWORD }}
         run: npm run cypress:run

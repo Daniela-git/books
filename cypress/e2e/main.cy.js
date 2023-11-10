@@ -1,7 +1,7 @@
 import { loginPage, misListasPage } from '../fixtures';
 
-describe('template spec', () => {
-  it('passes', () => {
+describe('buscalibre', () => {
+  it('should write the prices', () => {
     cy.visit('https://www.buscalibre.com.co/v2/u');
     loginPage.login(Cypress.env('username'), Cypress.env('password'));
     misListasPage.getData();
