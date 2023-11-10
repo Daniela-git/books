@@ -34,3 +34,7 @@ jobs:
         run: |
           echo {{CYPRESS_username}}
           npm run cypress:run
+      - name: Update results file
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm run upload:result
