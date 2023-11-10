@@ -15,29 +15,23 @@ async function getFileSha(token) {
 async function uploadFileApi(token, content) {
   const sha = await getFileSha(token);
   console.log(sha);
-  const data = JSON.stringify({
-    message: 'updating results file',
-    content: `${content}`,
-    sha,
-  });
+  const url =
+    'https://api.github.com/repos/Daniela-git/books/contents/results.json';
 
-  const config = {
-    method: 'put',
-    url: 'https://api.github.com/repos/Daniela-git/books/contents/results.json',
+  const data = {
+    message: 'update results file',
+    content,
+    sha,
+  };
+
+  const response = await axios.put(url, data, {
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
-    data: data,
-  };
+  });
 
-  axios(config)
-    .then(function (response) {
-      console.log(JSON.stringify(response.data));
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
+  console.log(JSON.stringify(response.data));
 }
 
 async function sendFile() {
