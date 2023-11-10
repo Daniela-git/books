@@ -41,7 +41,7 @@ async function uploadFileApi(token, content) {
 }
 
 async function sendFile() {
-  const token = process.env(TOKEN);
+  const token = process.env('TOKEN');
   const content = fs.readFileSync('../results.json').toString('base64');
   await uploadFileApi(token, content);
 }
