@@ -1,5 +1,3 @@
-const button = document.getElementById("agregar");
-
 async function readFile(rutaArchivo) {
   try {
     const response = await fetch(rutaArchivo);
@@ -38,4 +36,4 @@ async function agregarFila() {
   });
 }
 
-button.addEventListener("click", (e) => agregarFila());
+document.addEventListener("DOMContentLoaded", (e) => agregarFila());
