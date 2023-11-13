@@ -2,7 +2,7 @@ name: GitHub Schedule run
 run-name: ${{ github.actor }} is testing out GitHub Actions
 on:
   schedule:
-    - cron: '0 23 * * *'
+    - cron: '0 18 * * *'
 jobs:
   schedule-run:
     runs-on: ubuntu-latest
