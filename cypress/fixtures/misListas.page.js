@@ -43,6 +43,7 @@ class MisListasPage {
   writeData() {
     cy.readFile('results.json').then((results) => {
       const titles = Object.keys(results);
+      const newResults = {};
       _.forEach(this.todaysData, (data) => {
         const { title, ...rest } = data;
         const bookObj = {
@@ -55,14 +56,15 @@ class MisListasPage {
           if (book.lowestPrice > data.currentPrice) {
             book.lowestPrice = data.currentPrice;
           }
+          newResults[title] = book;
         } else {
-          results[title] = {
+          newResults[title] = {
             prices: [bookObj],
             lowestPrice: data.currentPrice,
           };
         }
       });
-      cy.writeFile('results.json', JSON.stringify(results));
+      cy.writeFile('results.json', JSON.stringify(newResults));
     });
   }
 }
