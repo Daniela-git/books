@@ -1,8 +1,9 @@
 name: GitHub Schedule run
 run-name: ${{ github.actor }} is testing out GitHub Actions
 on:
-  schedule:
-    - cron: '0 8 * * *'
+  - workflow_dispatch
+  - schedule:
+      - cron: '0 8 * * *'
 jobs:
   schedule-run:
     runs-on: ubuntu-latest
