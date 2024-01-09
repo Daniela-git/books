@@ -1,8 +1,8 @@
 name: GitHub Schedule run
-run-name: ${{ github.actor }} is testing out GitHub Actions
+run-name: ${{ github.actor }} is running books
 on:
   schedule:
-      - cron: '0 8 * * *'
+    - cron: '0 8 * * *'
   workflow_dispatch:
 jobs:
   schedule-run:
@@ -36,3 +36,6 @@ jobs:
         env:
           TOKEN: ${{ secrets.TOKEN }}
         run: npm run upload:result
+      - name: Send notification if fails
+        if: failure()
+        run: npm run send:error
