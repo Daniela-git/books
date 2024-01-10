@@ -39,5 +39,7 @@ jobs:
         run: node sendFile
       - name: Send notification if fails
         working-directory: axios
+        env:
+          EMAIL_KEY: ${{ secrets.EMAIL_KEY }}
         if: failure()
         run: node sendError
