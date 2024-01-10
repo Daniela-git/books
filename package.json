@@ -6,8 +6,8 @@
   "scripts": {
     "test": "cypress open",
     "cypress:run": "cypress run -b chrome",
-    "upload:result": "node axios/sendFile",
-    "send:error": "node axios/sendError"
+    "upload:result": "node axios/sendFile.js",
+    "send:error": "node axios/sendError.js"
   },
   "author": "",
   "license": "ISC",
