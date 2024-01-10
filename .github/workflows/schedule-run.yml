@@ -33,9 +33,11 @@ jobs:
           echo {{CYPRESS_username}}
           npm run cypress:run
       - name: Update results file
+        working-directory: axios
         env:
           TOKEN: ${{ secrets.TOKEN }}
-        run: npm run upload:result
+        run: node sendFile
       - name: Send notification if fails
+        working-directory: axios
         if: failure()
-        run: npm run send:error
+        run: node sendError
