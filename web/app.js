@@ -1,46 +1,38 @@
-async function readFile(rutaArchivo) {
-  try {
-    const response = await fetch(rutaArchivo);
-
-    if (!response.ok) {
-      throw new Error(`No se pudo cargar el archivo: ${response.status}`);
-    }
-
-    const contenido = await response.text();
-    return JSON.parse(contenido);
-    // Aquí puedes trabajar con el contenido del archivo
-  } catch (error) {
-    console.error('Error al cargar el archivo:', error);
-  }
-}
+import { pool } from '../mysql/connection.js';
 
 // Función para agregar una nueva fila a la tabla
 async function agregarFila() {
   const table = document.getElementById('miTabla');
   const tbody = table.getElementsByTagName('tbody')[0];
-
-  const res = await readFile('../results.json');
-  const keys = Object.keys(res);
-  keys.forEach((key) => {
+  const getAllBooks = `SELECT title, lowest FROM books`;
+  const books = await pool.query(getAllBooks);
+  for await (const book of books) {
     const newRow = tbody.insertRow();
     const bookName = newRow.insertCell(0);
     const currentPrice = newRow.insertCell(1);
     const lowestPrice = newRow.insertCell(2);
     const moreButton = newRow.insertCell(3);
-    const pricesList = res[key].prices;
-    bookName.innerHTML = key;
-    currentPrice.innerHTML = pricesList.pop().currentPrice.toLocaleString();
-    lowestPrice.innerHTML = res[key].lowestPrice.toLocaleString();
-    moreButton.innerHTML = `<button type="button" class="btn btn-info more-button" data-book="${key}" >More</button>`;
+    const getLastPrice = `SELECT current_price,date FROM prices
+  WHERE book_title = "{title}" ORDER BY date ASC;
+  `;
+    const pricesList = await pool.query(
+      getLastPrice.replace('{title}', book.title)
+    );
+    console.log(pricesList);
+    bookName.innerHTML = book;
+    currentPrice.innerHTML = pricesList.pop().current_price.toLocaleString();
+    lowestPrice.innerHTML = book.lowest.toLocaleString();
+    moreButton.innerHTML = `<button type="button" class="btn btn-info more-button" data-book="${book.title}" data-lowest="${book.lowest}" >More</button>`;
     // moreButton.classList.add('more-button');
     // moreButton.setAttribute('data-book', `${key}`);
-  });
+  }
 }
 
 async function mostrarDetalles(e) {
   // Aquí puedes agregar lógica para obtener los detalles según el ID
   // Por ahora, agregaremos detalles ficticios para ilustrar el ejemplo
   const bookName = e.target.getAttribute('data-book');
+  const lowest = e.target.getAttribute('data-lowest');
   // Obtén la segunda tabla y su cuerpo
   const tablaDetalles = document.getElementById('tablaDetalles');
   const cuerpoTablaDetalles = document.getElementById('cuerpoTablaDetalles');
@@ -50,11 +42,13 @@ async function mostrarDetalles(e) {
 
   // Limpia el cuerpo de la segunda tabla
   cuerpoTablaDetalles.innerHTML = '';
-  const results = await readFile('../results.json');
 
   // Agrega filas a la segunda tabla con los detalles correspondientes
-  const book = results[bookName];
-  book.prices.forEach((price) => {
+  const getPrices = `SELECT current_price,date, regular_price, percentage FROM prices
+  WHERE book_title = "{title}" ORDER BY date DESC;
+  `;
+  const [prices] = pool.query(getPrices.replace('{title}', bookName));
+  prices.forEach((price) => {
     const fila = cuerpoTablaDetalles.insertRow();
     const date = fila.insertCell(0);
     const currentPrice = fila.insertCell(1);
@@ -62,8 +56,8 @@ async function mostrarDetalles(e) {
     const percentage = fila.insertCell(3);
 
     date.innerHTML = price.date;
-    currentPrice.innerHTML = price.currentPrice.toLocaleString();
-    regularPrice.innerHTML = price.regularPrice.toLocaleString();
+    currentPrice.innerHTML = price.current_price.toLocaleString();
+    regularPrice.innerHTML = price.regular_price.toLocaleString();
     percentage.innerHTML = price.percentage;
   });
   // Cambiar titulo

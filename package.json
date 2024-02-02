@@ -3,16 +3,28 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "cypress open",
     "cypress:run": "cypress run -b chrome",
     "upload:result": "node axios/sendFile.js",
-    "send:error": "node axios/sendError.js"
+    "send:error": "node axios/sendError.js",
+    "connect": "node mysql/connection.js",
+    "update:tables": "node mysql/updateTables.js",
+    "refactor": "node mysql/refactor.js",
+    "build": "webpack"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "axios": "^1.6.1",
-    "cypress": "^13.5.0"
+    "cypress": "^13.5.0",
+    "dotenv": "^16.4.1",
+    "mysql2": "^3.9.1",
+    "webpack-node-externals": "^3.0.0"
+  },
+  "devDependencies": {
+    "webpack": "^5.90.1",
+    "webpack-cli": "^5.1.4"
   }
 }

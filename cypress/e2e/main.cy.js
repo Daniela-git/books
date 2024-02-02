@@ -5,6 +5,5 @@ describe('buscalibre', () => {
     cy.visit('https://www.buscalibre.com.co/v2/u');
     loginPage.login(Cypress.env('username'), Cypress.env('password'));
     misListasPage.getData();
-    misListasPage.writeData();
   });
 });

@@ -1,4 +1,5 @@
-import { convertToNumber } from '../support/helper';
+import { convertToNumber } from '../support/helper.js';
+import { writeData } from '../../mysql/updateTables.js';
 
 const { _ } = Cypress;
 
@@ -9,7 +10,7 @@ class MisListasPage {
   currentPrice;
   percentage;
   bookInfo;
-  todaysData = [];
+  todaysData;
 
   constructor() {
     this.misListas = '.listaDeDeseos';
@@ -18,6 +19,7 @@ class MisListasPage {
     this.currentPrice = '.precioAhora';
     this.percentage = '.descuento-percent';
     this.bookInfo = '.info-div';
+    this.todaysData = {};
   }
 
   getData() {
@@ -30,42 +32,14 @@ class MisListasPage {
         const currentPrice = $bookElement.find(this.currentPrice).text();
         const percentage = $bookElement.find(this.percentage).text();
         const data = {
-          title,
           regularPrice: convertToNumber(regularPrice),
           currentPrice: convertToNumber(currentPrice),
           percentage: convertToNumber(percentage),
         };
-        this.todaysData.push(data);
+        this.todaysData[title] = data;
       });
+    cy.writeFile('todaysData.json', this.todaysData);
     cy.log(this.todaysData);
-  }
-
-  writeData() {
-    cy.readFile('results.json').then((results) => {
-      const titles = Object.keys(results);
-      const newResults = {};
-      _.forEach(this.todaysData, (data) => {
-        const { title, ...rest } = data;
-        const bookObj = {
-          ...rest,
-          date: new Date().toISOString().split('T')[0],
-        };
-        if (titles.includes(title)) {
-          const book = results[title];
-          book.prices.push(bookObj);
-          if (book.lowestPrice > data.currentPrice) {
-            book.lowestPrice = data.currentPrice;
-          }
-          newResults[title] = book;
-        } else {
-          newResults[title] = {
-            prices: [bookObj],
-            lowestPrice: data.currentPrice,
-          };
-        }
-      });
-      cy.writeFile('results.json', JSON.stringify(newResults));
-    });
   }
 }
 
