@@ -1,17 +1,17 @@
-import { readFileSync } from 'fs';
-import { pool } from './connection.js';
+import { readFileSync } from "fs";
+import { pool } from "./connection.js";
 
 function formatInsertPrice(rest, title) {
   let insertNewPrice = `INSERT INTO prices (book_title, regular_price, current_price, percentage) VALUES ("{title}", {regular_price}, {current_price}, {percentaje});`;
-  insertNewPrice = insertNewPrice.replace('{title}', title);
-  insertNewPrice = insertNewPrice.replace('{regular_price}', rest.regularPrice);
-  insertNewPrice = insertNewPrice.replace('{current_price}', rest.currentPrice);
-  insertNewPrice = insertNewPrice.replace('{percentaje}', rest.percentage);
+  insertNewPrice = insertNewPrice.replace("{title}", title);
+  insertNewPrice = insertNewPrice.replace("{regular_price}", rest.regularPrice);
+  insertNewPrice = insertNewPrice.replace("{current_price}", rest.currentPrice);
+  insertNewPrice = insertNewPrice.replace("{percentaje}", rest.percentage);
   return insertNewPrice;
 }
 
 const writeData = async () => {
-  const todaysData = JSON.parse(readFileSync('./todaysData.json'));
+  const todaysData = JSON.parse(readFileSync("./todaysData.json"));
   const getAllBooks = `SELECT title FROM books`;
   const inserNewBook = `INSERT INTO books (title,lowest) VALUES ("{title}", {lowest});`;
   const deleteBook = `DELETE FROM books WHERE title="{title}";`;
@@ -36,7 +36,7 @@ const writeData = async () => {
     const data = todaysData[key];
     if (index !== -1) {
       const [lastPrice] = await pool.query(
-        getLastPrice.replace('{title}', key)
+        getLastPrice.replace("{title}", key)
       );
       console.log(lastPrice);
       copyTitles.splice(index, 1);
@@ -44,12 +44,12 @@ const writeData = async () => {
       if (lastPrice.pop().current_price !== data.currentPrice) {
         await pool.query(formatInsertPrice(data, key));
         const [lowest] = await pool.query(
-          lowestPricePerBook.replace('{title}', key)
+          lowestPricePerBook.replace("{title}", key)
         );
 
         if (data.currentPrice < lowest[0].lowest) {
           await pool.query(
-            updateLowestPrice.replace('{lowest}', data.currentPrice)
+            updateLowestPrice.replace("{lowest}", data.currentPrice)
           );
         }
       }
@@ -67,17 +67,11 @@ const writeData = async () => {
     for await (const title of copyTitles) {
       // delete all the elements inside
       console.log(`delete ${title}`);
-      await pool.query(deletePrices.replace('{title}', title));
-      await pool.query(deleteBook.replace('{title}', title));
+      await pool.query(deletePrices.replace("{title}", title));
+      await pool.query(deleteBook.replace("{title}", title));
     }
   }
   pool.end();
-};
-
-export const getLowestPrices = async () => {
-  const lowestPriceQuery = `SELECT book_title, MIN(current_price) as lowest FROM prices GROUP BY book_title`;
-  const lowestPrices = await pool.query(lowestPriceQuery);
-  return lowestPrices;
 };
 
 writeData();

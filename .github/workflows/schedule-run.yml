@@ -35,6 +35,7 @@ jobs:
       - name: List
         run: ls
       - name: Update db
+        working-directory: mysql
         run: node run update:tables
       - name: Send notification if fails
         working-directory: axios
