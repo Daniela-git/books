@@ -1,7 +1,7 @@
 // Función para agregar una nueva fila a la tabla
 async function agregarFila() {
   const response = await fetch(
-    `http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/books`
+    `http://books-production-61b2.up.railway.app/books`
   );
   const books = await response.json();
   const table = document.getElementById('miTabla');
@@ -39,7 +39,7 @@ async function mostrarDetalles(e) {
 
   // Agrega filas a la segunda tabla con los detalles correspondientes
   const response = await fetch(
-    `http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/book`,
+    `http://books-production-61b2.up.railway.app/book`,
     {
       method: 'POST',
       headers: {
