@@ -7,7 +7,7 @@ export const pool = createPool({
   host: process.env.HOST,
   password: process.env.PASS,
   database: process.env.DATABASE,
-  port: process.env.PORT,
+  port: process.env.DB_PORT,
 });
 
 // pool.query(`CREATE TABLE books (

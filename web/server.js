@@ -4,7 +4,7 @@ import bodyParser from 'body-parser';
 import { pool } from '../mysql/connection.js';
 
 const app = express();
-const port = process.env.SERVER_PORT || 3000;
+const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(bodyParser.json());
 
