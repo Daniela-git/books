@@ -1,6 +1,8 @@
 // Función para agregar una nueva fila a la tabla
 async function agregarFila() {
-  const response = await fetch('http://localhost:3000/books');
+  const response = await fetch(
+    `http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/books`
+  );
   const books = await response.json();
   const table = document.getElementById('miTabla');
   const tbody = table.getElementsByTagName('tbody')[0];
@@ -36,13 +38,16 @@ async function mostrarDetalles(e) {
   cuerpoTablaDetalles.innerHTML = '';
 
   // Agrega filas a la segunda tabla con los detalles correspondientes
-  const response = await fetch('http://localhost:3000/book', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json', // Indica que estás enviando datos en formato JSON
-    },
-    body: JSON.stringify({ bookName }), // Convierte los datos a formato JSON
-  });
+  const response = await fetch(
+    `http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/book`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json', // Indica que estás enviando datos en formato JSON
+      },
+      body: JSON.stringify({ bookName }), // Convierte los datos a formato JSON
+    }
+  );
   const prices = await response.json();
   prices.forEach((price) => {
     const fila = cuerpoTablaDetalles.insertRow();
