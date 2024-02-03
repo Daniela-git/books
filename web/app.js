@@ -1,26 +1,18 @@
-import { pool } from '../mysql/connection.js';
-
 // Función para agregar una nueva fila a la tabla
 async function agregarFila() {
+  const response = await fetch('http://localhost:3000/books');
+  const books = await response.json();
   const table = document.getElementById('miTabla');
   const tbody = table.getElementsByTagName('tbody')[0];
-  const getAllBooks = `SELECT title, lowest FROM books`;
-  const books = await pool.query(getAllBooks);
   for await (const book of books) {
     const newRow = tbody.insertRow();
     const bookName = newRow.insertCell(0);
     const currentPrice = newRow.insertCell(1);
     const lowestPrice = newRow.insertCell(2);
     const moreButton = newRow.insertCell(3);
-    const getLastPrice = `SELECT current_price,date FROM prices
-  WHERE book_title = "{title}" ORDER BY date ASC;
-  `;
-    const pricesList = await pool.query(
-      getLastPrice.replace('{title}', book.title)
-    );
-    console.log(pricesList);
-    bookName.innerHTML = book;
-    currentPrice.innerHTML = pricesList.pop().current_price.toLocaleString();
+    console.log(book);
+    bookName.innerHTML = book.title;
+    currentPrice.innerHTML = book.pricesList.current_price.toLocaleString();
     lowestPrice.innerHTML = book.lowest.toLocaleString();
     moreButton.innerHTML = `<button type="button" class="btn btn-info more-button" data-book="${book.title}" data-lowest="${book.lowest}" >More</button>`;
     // moreButton.classList.add('more-button');
@@ -44,10 +36,14 @@ async function mostrarDetalles(e) {
   cuerpoTablaDetalles.innerHTML = '';
 
   // Agrega filas a la segunda tabla con los detalles correspondientes
-  const getPrices = `SELECT current_price,date, regular_price, percentage FROM prices
-  WHERE book_title = "{title}" ORDER BY date DESC;
-  `;
-  const [prices] = pool.query(getPrices.replace('{title}', bookName));
+  const response = await fetch('http://localhost:3000/book', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json', // Indica que estás enviando datos en formato JSON
+    },
+    body: JSON.stringify({ bookName }), // Convierte los datos a formato JSON
+  });
+  const prices = await response.json();
   prices.forEach((price) => {
     const fila = cuerpoTablaDetalles.insertRow();
     const date = fila.insertCell(0);
@@ -55,14 +51,14 @@ async function mostrarDetalles(e) {
     const regularPrice = fila.insertCell(2);
     const percentage = fila.insertCell(3);
 
-    date.innerHTML = price.date;
+    date.innerHTML = price.date.split('T')[0];
     currentPrice.innerHTML = price.current_price.toLocaleString();
     regularPrice.innerHTML = price.regular_price.toLocaleString();
     percentage.innerHTML = price.percentage;
   });
   // Cambiar titulo
   tableTitle.innerHTML = bookName;
-  lowestPrice.innerHTML = `Lowest: $${book.lowestPrice.toLocaleString()}`;
+  lowestPrice.innerHTML = `Lowest: $${lowest.toLocaleString()}`;
   // Muestra la segunda tabla y oculta la primera
   tablaDetalles.classList.remove('hidden');
   tablaDetalles.classList.add('table-striped');
