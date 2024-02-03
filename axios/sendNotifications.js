@@ -1,25 +1,25 @@
-import axios from 'axios';
+import axios from "axios";
 
 const options = (body) => {
   return {
-    method: 'POST',
-    url: 'https://rapidmail.p.rapidapi.com/',
+    method: "POST",
+    url: "https://rapidmail.p.rapidapi.com/",
     headers: {
-      'content-type': 'application/json',
-      'X-RapidAPI-Key': process.env.EMAIL_KEY,
-      'X-RapidAPI-Host': 'rapidmail.p.rapidapi.com',
+      "content-type": "application/json",
+      "X-RapidAPI-Key": process.env.EMAIL_KEY,
+      "X-RapidAPI-Host": "rapidmail.p.rapidapi.com",
     },
 
     data: {
-      ishtml: 'false',
-      sendto: 'nomegusta782@gmail.com',
-      title: 'Books failed',
+      ishtml: "false",
+      sendto: "nomegusta782@gmail.com",
+      title: "Books failed",
       body,
     },
   };
 };
 
-async function sendNotification(body) {
+export async function sendNotification(body) {
   try {
     const response = await axios.request(options(body));
     console.log(response.data);
@@ -27,5 +27,3 @@ async function sendNotification(body) {
     console.error(error);
   }
 }
-
-module.exports = sendNotification;
