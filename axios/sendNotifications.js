@@ -19,7 +19,7 @@ const options = (body) => {
   };
 };
 
-export async function sendNotification(body) {
+export default async function sendNotification(body) {
   try {
     const response = await axios.request(options(body));
     console.log(response.data);
