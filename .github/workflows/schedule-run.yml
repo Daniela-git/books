@@ -32,6 +32,10 @@ jobs:
         run: |
           echo {{CYPRESS_username}}
           npm run cypress:run
+      - name: List
+        run: ls
+      - name: Update db
+        run: node update:tables
       - name: Send notification if fails
         working-directory: axios
         env:
