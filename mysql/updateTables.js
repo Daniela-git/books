@@ -23,52 +23,58 @@ const writeData = async () => {
   WHERE title = "{title}";
   `;
   const getLastPrice = `SELECT current_price,date FROM prices
-  WHERE book_title = "{title}" ORDER BY date ASC;
+  WHERE book_title = "{title}" ORDER BY date DESC LIMIT 1;
   `;
   const result = await pool.query(getAllBooks);
   const titles = result[0].map((book) => book.title);
   console.log(titles);
-  const copyTitles = Array.from(titles);
   const keys = Object.keys(todaysData);
-  for await (const key of keys) {
-    const index = titles.indexOf(key);
-    const data = todaysData[key];
+  console.log(keys);
+
+  // updates titles on the DB and add new books
+  for await (const title of keys) {
+    const index = titles.indexOf(title);
+    const data = todaysData[title];
+    console.log({ title: title, index });
     if (index !== -1) {
       console.log("update book");
       const [lastPrice] = await pool.query(
-        getLastPrice.replace("{title}", key)
+        getLastPrice.replace("{title}", title)
       );
-      console.log(lastPrice);
-      copyTitles.splice(index, 1);
       // we are only gonna store the price if it changes
-      if (lastPrice.pop().current_price !== data.currentPrice) {
-        console.log("price changed");
-        await pool.query(formatInsertPrice(data, key));
+      if (lastPrice[0].current_price !== data.currentPrice) {
+        console.log(
+          `price change: old ${lastPrice[0].current_price} - new ${data.currentPrice}`
+        );
+        await pool.query(formatInsertPrice(data, title));
         const [lowest] = await pool.query(
-          lowestPricePerBook.replace("{title}", key)
+          lowestPricePerBook.replace("{title}", title)
         );
 
         if (data.currentPrice < lowest[0].lowest) {
-          console.log("update lowest price");
+          console.log(
+            `update lowest price: old ${lastPrice[0].current_price} - new ${data.currentPrice}`
+          );
           await pool.query(
             updateLowestPrice.replace("{lowest}", data.currentPrice)
           );
         }
       }
     } else {
-      console.log("new book");
+      console.log(`new book ${title}`);
       await pool.query(
         inserNewBook.replace(
           '"{title}", {lowest}',
-          `"${key}", ${data.currentPrice}`
+          `"${title}", ${data.currentPrice}`
         )
       );
-      await pool.query(formatInsertPrice(data, key));
+      await pool.query(formatInsertPrice(data, title));
     }
   }
-  if (copyTitles.length !== 0) {
-    for await (const title of copyTitles) {
-      // delete all prices and book from tables
+  // delete all prices and book from tables
+  for await (const title of titles) {
+    const inTodays = keys.includes(title);
+    if (!inTodays) {
       console.log(`delete ${title}`);
       await pool.query(deletePrices.replace("{title}", title));
       await pool.query(deleteBook.replace("{title}", title));
