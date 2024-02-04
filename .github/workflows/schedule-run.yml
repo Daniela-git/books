@@ -36,7 +36,7 @@ jobs:
         run: ls
       - name: Update db
         working-directory: mysql
-        run: node run update:tables
+        run: node updateTables
       - name: Send notification if fails
         working-directory: axios
         env:
