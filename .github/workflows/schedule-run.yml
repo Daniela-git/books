@@ -35,6 +35,12 @@ jobs:
       - name: List
         run: ls
       - name: Update db
+        env:
+          DB_USER: ${{ secrets.DB_USER }}
+          HOST: ${{ secrets.HOST }}
+          PASS: ${{ secrets.PASS }}
+          DATABASE: ${{ secrets.DATABASE }}
+          DB_PORT: ${{ secrets.DB_PORT }}
         run: npm run update:tables
       - name: Send notification if fails
         working-directory: axios

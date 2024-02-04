@@ -22,7 +22,6 @@ const writeData = async () => {
   SET lowest = {lowest}
   WHERE title = "{title}";
   `;
-  // select current_price, date from prices where book_title = "{title}" order by date asc
   const getLastPrice = `SELECT current_price,date FROM prices
   WHERE book_title = "{title}" ORDER BY date ASC;
   `;
@@ -35,6 +34,7 @@ const writeData = async () => {
     const index = titles.indexOf(key);
     const data = todaysData[key];
     if (index !== -1) {
+      console.log("update book");
       const [lastPrice] = await pool.query(
         getLastPrice.replace("{title}", key)
       );
@@ -42,18 +42,21 @@ const writeData = async () => {
       copyTitles.splice(index, 1);
       // we are only gonna store the price if it changes
       if (lastPrice.pop().current_price !== data.currentPrice) {
+        console.log("price changed");
         await pool.query(formatInsertPrice(data, key));
         const [lowest] = await pool.query(
           lowestPricePerBook.replace("{title}", key)
         );
 
         if (data.currentPrice < lowest[0].lowest) {
+          console.log("update lowest price");
           await pool.query(
             updateLowestPrice.replace("{lowest}", data.currentPrice)
           );
         }
       }
     } else {
+      console.log("new book");
       await pool.query(
         inserNewBook.replace(
           '"{title}", {lowest}',
@@ -65,7 +68,7 @@ const writeData = async () => {
   }
   if (copyTitles.length !== 0) {
     for await (const title of copyTitles) {
-      // delete all the elements inside
+      // delete all prices and book from tables
       console.log(`delete ${title}`);
       await pool.query(deletePrices.replace("{title}", title));
       await pool.query(deleteBook.replace("{title}", title));
