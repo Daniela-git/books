@@ -1,17 +1,17 @@
-import { readFileSync } from "fs";
-import { pool } from "./connection.js";
+import { readFileSync } from 'fs';
+import { pool } from './connection.js';
 
 function formatInsertPrice(rest, title) {
   let insertNewPrice = `INSERT INTO prices (book_title, regular_price, current_price, percentage) VALUES ("{title}", {regular_price}, {current_price}, {percentaje});`;
-  insertNewPrice = insertNewPrice.replace("{title}", title);
-  insertNewPrice = insertNewPrice.replace("{regular_price}", rest.regularPrice);
-  insertNewPrice = insertNewPrice.replace("{current_price}", rest.currentPrice);
-  insertNewPrice = insertNewPrice.replace("{percentaje}", rest.percentage);
+  insertNewPrice = insertNewPrice.replace('{title}', title);
+  insertNewPrice = insertNewPrice.replace('{regular_price}', rest.regularPrice);
+  insertNewPrice = insertNewPrice.replace('{current_price}', rest.currentPrice);
+  insertNewPrice = insertNewPrice.replace('{percentaje}', rest.percentage);
   return insertNewPrice;
 }
 
 const writeData = async () => {
-  const todaysData = JSON.parse(readFileSync("./todaysData.json"));
+  const todaysData = JSON.parse(readFileSync('./todaysData.json'));
   const getAllBooks = `SELECT title FROM books`;
   const inserNewBook = `INSERT INTO books (title,lowest) VALUES ("{title}", {lowest});`;
   const deleteBook = `DELETE FROM books WHERE title="{title}";`;
@@ -37,9 +37,9 @@ const writeData = async () => {
     const data = todaysData[title];
     console.log({ title: title, index });
     if (index !== -1) {
-      console.log("update book");
+      console.log('update book');
       const [lastPrice] = await pool.query(
-        getLastPrice.replace("{title}", title)
+        getLastPrice.replace('{title}', title)
       );
       // we are only gonna store the price if it changes
       if (lastPrice[0].current_price !== data.currentPrice) {
@@ -48,15 +48,15 @@ const writeData = async () => {
         );
         await pool.query(formatInsertPrice(data, title));
         const [lowest] = await pool.query(
-          lowestPricePerBook.replace("{title}", title)
+          lowestPricePerBook.replace('{title}', title)
         );
-
+        console.log(lowest[0].lowest, ' lowest');
         if (data.currentPrice < lowest[0].lowest) {
           console.log(
-            `update lowest price: old ${lastPrice[0].current_price} - new ${data.currentPrice}`
+            `update lowest price: old ${lowest[0].lowest} - new ${data.currentPrice}`
           );
           await pool.query(
-            updateLowestPrice.replace("{lowest}", data.currentPrice)
+            updateLowestPrice.replace('{lowest}', data.currentPrice)
           );
         }
       }
@@ -76,8 +76,8 @@ const writeData = async () => {
     const inTodays = keys.includes(title);
     if (!inTodays) {
       console.log(`delete ${title}`);
-      await pool.query(deletePrices.replace("{title}", title));
-      await pool.query(deleteBook.replace("{title}", title));
+      await pool.query(deletePrices.replace('{title}', title));
+      await pool.query(deleteBook.replace('{title}', title));
     }
   }
   pool.end();
