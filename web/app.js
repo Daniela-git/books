@@ -16,7 +16,7 @@ async function agregarFila() {
     bookName.innerHTML = book.book_title;
     currentPrice.innerHTML = book.latest_price.toLocaleString();
     lowestPrice.innerHTML = book.lowest.toLocaleString();
-    moreButton.innerHTML = `<button type="button" class="btn btn-info more-button" data-book="${book.title}" data-lowest="${book.lowest}" >More</button>`;
+    moreButton.innerHTML = `<button type="button" class="btn btn-info more-button" data-book="${book.book_title}" data-lowest="${book.lowest}" >More</button>`;
     // moreButton.classList.add('more-button');
     // moreButton.setAttribute('data-book', `${key}`);
   }
