@@ -13,8 +13,8 @@ async function agregarFila() {
     const lowestPrice = newRow.insertCell(2);
     const moreButton = newRow.insertCell(3);
     console.log(book);
-    bookName.innerHTML = book.title;
-    currentPrice.innerHTML = book.pricesList.current_price.toLocaleString();
+    bookName.innerHTML = book.book_title;
+    currentPrice.innerHTML = book.latest_price.toLocaleString();
     lowestPrice.innerHTML = book.lowest.toLocaleString();
     moreButton.innerHTML = `<button type="button" class="btn btn-info more-button" data-book="${book.title}" data-lowest="${book.lowest}" >More</button>`;
     // moreButton.classList.add('more-button');

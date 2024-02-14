@@ -13,15 +13,9 @@ function formatInsertPrice(rest, title) {
 const writeData = async () => {
   const todaysData = JSON.parse(readFileSync('./todaysData.json'));
   const getAllBooks = `SELECT title FROM books`;
-  const inserNewBook = `INSERT INTO books (title,lowest) VALUES ("{title}", {lowest});`;
+  const insertNewBook = `INSERT INTO books (title) VALUES ("{title}");`;
   const deleteBook = `DELETE FROM books WHERE title="{title}";`;
   const deletePrices = `DELETE FROM prices WHERE book_title="{title}";`;
-  const lowestPricePerBook = `SELECT lowest FROM books WHERE title="{title}"`;
-  const updateLowestPrice = `
-  UPDATE books
-  SET lowest = {lowest}
-  WHERE title = "{title}";
-  `;
   const getLastPrice = `SELECT current_price,date FROM prices
   WHERE book_title = "{title}" ORDER BY date DESC LIMIT 1;
   `;
@@ -47,27 +41,10 @@ const writeData = async () => {
           `price change: old ${lastPrice[0].current_price} - new ${data.currentPrice}`
         );
         await pool.query(formatInsertPrice(data, title));
-        const [lowest] = await pool.query(
-          lowestPricePerBook.replace('{title}', title)
-        );
-        console.log(lowest[0].lowest, ' lowest');
-        if (data.currentPrice < lowest[0].lowest) {
-          console.log(
-            `update lowest price: old ${lowest[0].lowest} - new ${data.currentPrice}`
-          );
-          await pool.query(
-            updateLowestPrice.replace('{lowest}', data.currentPrice)
-          );
-        }
       }
     } else {
       console.log(`new book ${title}`);
-      await pool.query(
-        inserNewBook.replace(
-          '"{title}", {lowest}',
-          `"${title}", ${data.currentPrice}`
-        )
-      );
+      await pool.query(insertNewBook.replace('{title}', title));
       await pool.query(formatInsertPrice(data, title));
     }
   }

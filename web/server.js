@@ -8,46 +8,49 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(bodyParser.json());
 
-// work in progress
-// app.get('/', async (req, res) => {
-//   const getLatestPrices = `WITH RankedData AS (
-//     SELECT
-//       *,
-//       ROW_NUMBER() OVER (PARTITION BY book_title ORDER BY date DESC) AS rn
-//     FROM
-//       prices
-//   )
-//   SELECT
-//     *
-//   FROM
-//     RankedData
-//   WHERE
-//     rn = 1;
-//   `;
-//   const [prices] = await pool.query(getLatestPrices);
-//   const lowestPriceQuery = `SELECT book_title, MIN(current_price) as lowest FROM prices GROUP BY book_title`;
-//   const [lowest] = await pool.query(lowestPriceQuery);
-//   res.send({ prices, lowest });
-// });
 app.get('/books', async (req, res) => {
   try {
-    const getAllBooks = `SELECT title, lowest FROM books`;
-    const [books] = await pool.query(getAllBooks);
-    const respond = [];
-    for await (const book of books) {
-      const getLastPrice = `SELECT current_price,date FROM prices
-  WHERE book_title = "{title}" ORDER BY date ASC;
-  `;
-      const [pricesList] = await pool.query(
-        getLastPrice.replace('{title}', book.title)
-      );
-      respond.push({
-        title: book.title,
-        pricesList: pricesList.pop(),
-        lowest: book.lowest,
-      });
-    }
-    res.send(respond);
+    const query = `SELECT 
+    lowest_prices.book_title,
+    lowest_prices.lowest,
+    latest_prices.current_price AS latest_price
+    FROM
+        (
+            SELECT
+                book_title,
+                MIN(current_price) AS lowest
+            FROM
+                prices
+            GROUP BY
+                book_title
+        ) AS lowest_prices
+    INNER JOIN
+        (
+            SELECT
+                p.book_title,
+                p.current_price,
+                MAX(p.date) AS latest_date
+            FROM
+                prices p
+            INNER JOIN
+                (
+                    SELECT
+                        book_title,
+                        MAX(date) AS latest_date
+                    FROM
+                        prices
+                    GROUP BY
+                        book_title
+                ) latest_prices ON p.book_title = latest_prices.book_title
+                                AND p.date = latest_prices.latest_date
+            GROUP BY
+                p.book_title,
+                p.current_price
+        ) AS latest_prices ON lowest_prices.book_title = latest_prices.book_title;
+    `;
+    const [books] = await pool.query(query);
+    console.log(books);
+    res.send(books);
   } catch (error) {
     console.error('Error en la consulta:', error);
     res.status(500).send('Error en el servidor');
