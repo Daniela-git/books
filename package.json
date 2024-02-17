@@ -7,13 +7,10 @@
   "scripts": {
     "test": "cypress open",
     "cypress:run": "cypress run -b chrome",
-    "upload:result": "node axios/sendFile.js",
     "send:error": "node axios/sendError.js",
-    "connect": "node mysql/connection.js",
-    "update:tables": "node mysql/updateTables.js",
-    "refactor": "node mysql/refactor.js",
-    "dev": "nodemon web/server.js",
-    "start": "node web/server.js"
+    "update:tables": "node notion/updateTables.js",
+    "notion:query": "node notion/queries.js",
+    "dev": "nodemon web/server.js"
   },
   "author": "",
   "license": "ISC",
@@ -25,6 +22,7 @@
     "dotenv": "^16.4.1",
     "express": "^4.18.2",
     "mysql2": "^3.9.1",
-    "nodemon": "^3.0.3"
+    "nodemon": "^3.0.3",
+    "@notionhq/client": "^2.2.1"
   }
 }

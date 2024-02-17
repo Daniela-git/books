@@ -34,14 +34,12 @@ jobs:
           npm run cypress:run
       - name: List
         run: ls
-      - name: Update db
+      - name: Update notion
+        working-directory: notion
         env:
-          DB_USER: ${{ secrets.DB_USER }}
-          HOST: ${{ secrets.HOST }}
-          PASS: ${{ secrets.PASS }}
-          DATABASE: ${{ secrets.DATABASE }}
-          DB_PORT: ${{ secrets.DB_PORT }}
-        run: npm run update:tables
+          NOTION_DB: ${{ secrets.NOTION_DB}}
+          NOTION_KEY: ${{ secrets.NOTION_KEY}}
+        run: node updateTables
       - name: Send notification if fails
         working-directory: axios
         env:
