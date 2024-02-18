@@ -11,6 +11,7 @@ const writeData = async () => {
     const data = todaysData[title];
     console.log("update book");
     const lastPriceObj = await getLastPrice(title);
+    const date = new Date().toISOString();
     console.log({ lastPriceObj });
     if (!lastPriceObj) {
       // new book
@@ -19,7 +20,7 @@ const writeData = async () => {
         data.currentPrice,
         data.regularPrice,
         data.percentage,
-        new Date().toISOString(),
+        date,
         true
       );
     } else {
@@ -42,7 +43,7 @@ const writeData = async () => {
             data.currentPrice,
             data.regularPrice,
             data.percentage,
-            data.date,
+            date,
             true
           );
           await lowestToFalse(lowestObj.id);
@@ -52,7 +53,7 @@ const writeData = async () => {
             data.currentPrice,
             data.regularPrice,
             data.percentage,
-            data.date,
+            date,
             false
           );
         }

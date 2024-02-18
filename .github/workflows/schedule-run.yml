@@ -35,11 +35,10 @@ jobs:
       - name: List
         run: ls
       - name: Update notion
-        working-directory: notion
         env:
           NOTION_DB: ${{ secrets.NOTION_DB}}
           NOTION_KEY: ${{ secrets.NOTION_KEY}}
-        run: node updateTables
+        run: npm run update:tables
       - name: Send notification if fails
         working-directory: axios
         env:
