@@ -1,4 +1,4 @@
-import { convertToNumber } from "../support/helper.js";
+import { convertToNumber } from '../support/helper.js';
 
 class MisListasPage {
   misListas;
@@ -10,19 +10,19 @@ class MisListasPage {
   todaysData;
 
   constructor() {
-    this.misListas = ".listaDeDeseos";
-    this.title = ".title";
-    this.regularPrice = ".precioAntes";
-    this.currentPrice = ".precioAhora";
-    this.percentage = ".descuento-percent";
-    this.bookInfo = ".info-div";
+    this.misListas = '.wishlist';
+    this.title = '.title';
+    this.regularPrice = '.precioAntes';
+    this.currentPrice = '.precioAhora';
+    this.percentage = '.descuento-percent';
+    this.bookInfo = '.info-div';
     this.todaysData = {};
   }
 
   getData() {
-    cy.get(this.misListas).should("be.visible").click();
+    cy.get(this.misListas).should('be.visible').click();
     cy.get(this.bookInfo)
-      .should("be.visible")
+      .should('be.visible')
       .each(($bookElement) => {
         const title = $bookElement.find(this.title).text();
         const regularPrice = $bookElement.find(this.regularPrice).text();
@@ -35,7 +35,7 @@ class MisListasPage {
         };
         this.todaysData[title] = data;
       });
-    cy.writeFile("todaysData.json", this.todaysData);
+    cy.writeFile('todaysData.json', this.todaysData);
     cy.log(this.todaysData);
   }
 }
