@@ -2,7 +2,7 @@ name: GitHub Schedule run
 run-name: ${{ github.actor }} is testing out GitHub Actions
 on:
   schedule:
-    - cron: "0 8 * * *"
+    - cron: '0 8 * * *'
   workflow_dispatch:
 jobs:
   schedule-run:
@@ -22,7 +22,7 @@ jobs:
       - run: echo "🍏 This job's status is ${{ job.status }}."
       - uses: actions/setup-node@v3
         with:
-          node-version: "16.x"
+          node-version: '16.x'
       - name: Install packages
         run: npm install
       - name: Run script
@@ -39,6 +39,11 @@ jobs:
           NOTION_DB: ${{ secrets.NOTION_DB}}
           NOTION_KEY: ${{ secrets.NOTION_KEY}}
         run: npm run update:tables
+      - name: Send email when new lowest prices
+        working-directory: axios
+        env:
+          EMAIL_KEY: ${{ secrets.EMAIL_KEY }}
+        run: node sendNewLowest
       - name: Send notification if fails
         working-directory: axios
         env:
