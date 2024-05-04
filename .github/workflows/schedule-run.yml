@@ -32,13 +32,13 @@ jobs:
         run: |
           echo {{CYPRESS_username}}
           npm run cypress:run
-      - name: List
-        run: ls
       - name: Update notion
         env:
           NOTION_DB: ${{ secrets.NOTION_DB}}
           NOTION_KEY: ${{ secrets.NOTION_KEY}}
         run: npm run update:tables
+      - name: list
+        run: ls
       - name: Send email when new lowest prices
         working-directory: axios
         env:
