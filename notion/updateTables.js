@@ -10,10 +10,10 @@ const writeData = async () => {
   // add to the database if it changes
   for await (const title of keys) {
     const data = todaysData[title];
-    console.log('update book');
+    
     const lastPriceObj = await getLastPrice(title);
     const date = new Date().toISOString();
-    console.log({ lastPriceObj });
+    
     if (!lastPriceObj) {
       // new book
       await addPage(
