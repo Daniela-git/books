@@ -16,6 +16,7 @@ const writeData = async () => {
     
     if (!lastPriceObj) {
       // new book
+      console.log({new_book:title})
       await addPage(
         title,
         data.currentPrice,
