@@ -65,7 +65,7 @@ const writeData = async () => {
   }
   console.log({newLowest})
   if (newLowest.length > 0) {
-    writeFileSync('./newLowers.json', JSON.stringify(newLowest));
+    writeFileSync('./newLowest.json', JSON.stringify(newLowest));
   }
 };
 
