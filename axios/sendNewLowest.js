@@ -1,16 +1,17 @@
 import { readFileSync } from 'fs';
-import sendNotification from './sendNotifications.js';
+import updateTelegram from './telegramUpdates.js';
 
 function sendNewLowestEmail() {
   try {
-    const lowest = JSON.parse(readFileSync('../newLowest.json'));
+    const lowest = JSON.parse(readFileSync('./newLowest.json'));
     let text = '';
     for (const book of lowest) {
-      text = `${text}\n${book.title}: $${book.price}`;
+      const price = Number(book.price);
+      text = `${text}\n${book.title}: $${price.toLocaleString()}`;
     }
-    console.log({ text });
-    sendNotification(text, 'New Lowest');
+    updateTelegram(text);
   } catch (error) {
+    console.log(error);
     console.log('no new lowest');
   }
 }
