@@ -8,9 +8,12 @@ function sendNewLowestEmail() {
   for (const book of lowest) {
     text = `${text}\n${book.title}: $${book.price}`;
   }
+  console.log({ text });
   sendNotification(text);
 }
 const filePath = join(process.cwd(), 'newLowest.json');
+console.log({ filePath });
 if (existsSync(filePath)) {
+  console.log('send new lowest email');
   sendNewLowestEmail();
 }
