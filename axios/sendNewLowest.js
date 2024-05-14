@@ -1,5 +1,4 @@
-import { readFileSync, existsSync } from 'fs';
-import { join } from 'path';
+import { readFileSync } from 'fs';
 import sendNotification from './sendNotifications.js';
 
 function sendNewLowestEmail() {
@@ -10,7 +9,7 @@ function sendNewLowestEmail() {
       text = `${text}\n${book.title}: $${book.price}`;
     }
     console.log({ text });
-    sendNotification(text);
+    sendNotification(text, 'New Lowest');
   } catch (error) {
     console.log('no new lowest');
   }
