@@ -4,7 +4,7 @@ import sendNotification from './sendNotifications.js';
 
 function sendNewLowestEmail() {
   try {
-    const lowest = JSON.parse(readFileSync('./newLowest.json'));
+    const lowest = JSON.parse(readFileSync('../newLowest.json'));
     let text = '';
     for (const book of lowest) {
       text = `${text}\n${book.title}: $${book.price}`;
