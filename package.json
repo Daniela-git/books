@@ -9,6 +9,7 @@
     "cypress:run": "cypress run -b chrome",
     "send:error": "node axios/sendError.js",
     "send:lowest": "node axios/sendNewLowest.js",
+    "send:goodPrice": "node axios/sendGoodPrice.js",
     "update:tables": "node notion/updateTables.js",
     "notion:query": "node notion/queries.js",
     "dev": "nodemon web/server.js"
