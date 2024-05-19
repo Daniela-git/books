@@ -44,7 +44,9 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        run: npm run send:lowest
+        run: |
+          npm run send:lowest
+          npm run send:goodPrice
       - name: Send notification if fails
         working-directory: axios
         env:
