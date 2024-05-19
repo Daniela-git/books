@@ -3,6 +3,7 @@ run-name: ${{ github.actor }} is testing out GitHub Actions
 on:
   schedule:
     - cron: '0 8 * * *'
+    - cron: '0 14 * * *'
   workflow_dispatch:
 jobs:
   schedule-run:
