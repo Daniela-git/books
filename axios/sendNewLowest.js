@@ -4,7 +4,7 @@ import updateTelegram from './telegramUpdates.js';
 function sendNewLowestEmail() {
   try {
     const lowest = JSON.parse(readFileSync('./newLowest.json'));
-    let text = '';
+    let text = 'NEW LOWEST/n';
     for (const book of lowest) {
       const price = Number(book.price);
       text = `${text}\n${book.title}: $${price.toLocaleString()}`;
