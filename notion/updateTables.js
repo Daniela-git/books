@@ -5,6 +5,7 @@ const writeData = async () => {
   const todaysData = JSON.parse(readFileSync('./todaysData.json'));
   const keys = Object.keys(todaysData);
   const newLowest = [];
+  const goodPrice = [];
   console.log(keys);
 
   // add to the database if it changes
@@ -59,6 +60,9 @@ const writeData = async () => {
             date,
             false
           );
+          if(data.currentPrice <= lowest + 5000){
+            goodPrice.push({ title, price: data.currentPrice });
+          }
         }
       }
     }
@@ -66,6 +70,9 @@ const writeData = async () => {
   console.log({newLowest})
   if (newLowest.length > 0) {
     writeFileSync('./newLowest.json', JSON.stringify(newLowest));
+  }
+  if (goodPrice.length > 0) {
+    writeFileSync('./goodPrice.json', JSON.stringify(goodPrice));
   }
 };
 
